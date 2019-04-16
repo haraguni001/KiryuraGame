@@ -55,6 +55,10 @@ public class Player : MonoBehaviour {
     [SerializeField]
     private Sprite eatSprite;
 
+    //効果音
+    [SerializeField, Header("バレット、触手、イート、ダメージ")]
+    private AudioSource[] audio;
+    private bool soundPlay;
     void Start()
     {
         tentacle.SetActive(false);
@@ -63,12 +67,14 @@ public class Player : MonoBehaviour {
         isBullet = false;
         isTentacle = false;
         spriteRenderer = GetComponent<SpriteRenderer>();
+        audio = GetComponents<AudioSource>();
 
         notTouch = false;
         minusTime = notTouchLimit;
         hp = defoHp;
         isEat = false;
         minusTimeE = eatTime;
+        soundPlay = false;
     }
 
     void Update()
@@ -77,14 +83,21 @@ public class Player : MonoBehaviour {
         if (notTouch)
         {
             spriteRenderer.sprite = damageSprite;
+            spriteRenderer.material.color = new Color(1, 0, 0, 1.0f);
                 tentacle.SetActive(false);
+            if (!soundPlay)
+            {
+                audio[3].PlayOneShot(audio[3].clip);
+                soundPlay = true;
+            }
             minusTime -= Time.deltaTime;
             if (minusTime <= 0)
             {
                 spriteRenderer.sprite = defaultSprite;
+                spriteRenderer.material.color = new Color(1, 1, 1, 1.0f);
                 minusTime = notTouchLimit;
                 notTouch = false;
-                
+                soundPlay = false;
             }
         }
 
@@ -92,6 +105,10 @@ public class Player : MonoBehaviour {
         if (isEat)
         {
             spriteRenderer.sprite = eatSprite;
+          if(!soundPlay)  {
+                audio[2].PlayOneShot(audio[2].clip);  //効果音再生
+                soundPlay = true;
+            }
                 tentacle.SetActive(false);
             minusTimeE -= Time.deltaTime;
             if (minusTimeE<=0)
@@ -99,6 +116,7 @@ public class Player : MonoBehaviour {
                 spriteRenderer.sprite = defaultSprite;
                 minusTimeE = eatTime;
                 isEat = false;
+                soundPlay = false;
             }
         }
 
@@ -126,6 +144,7 @@ public class Player : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.Space) && !isBullet)
             {
                 Instantiate(bullet, transform.position, Quaternion.identity);
+            audio[0].PlayOneShot(audio[0].clip);  //効果音再生
                 isBullet = true;
             }
         }
@@ -133,12 +152,18 @@ public class Player : MonoBehaviour {
         if (isTentacle && !notTouch && !isEat)
         {
             tentacle.SetActive(true);
+            if (!soundPlay)
+            {
+                audio[1].PlayOneShot(audio[1].clip);  //効果音再生
+                soundPlay = true;
+            }
             minusTimeT -= Time.deltaTime;
             if (minusTimeT <= 0.0f)
             {
                 tentacle.SetActive(false);
                 spriteRenderer.sprite = defaultSprite;
                 isTentacle = false;
+                soundPlay = false;
                 minusTimeT = tentacleTime;
             }
         }

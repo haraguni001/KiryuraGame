@@ -8,12 +8,24 @@ public class JumpEnemy : MonoBehaviour {
     [SerializeField]
     private float jump; //ジャンプ力
     private Rigidbody2D rig;
+    [SerializeField]
+    private float speed; //迫りくる速さ
 
-    public bool isGround;  //着地中か
-    public bool isJump;    //ジャンプ中か
-    public bool isAttack;  //攻撃中か
+    private bool isGround;  //着地中か
+    private bool isJump;    //ジャンプ中か
+    private bool isAttack;  //攻撃中か
     [SerializeField]
     private GameObject bullet; //攻撃
+
+    //dropアイテムと、dropアイテムの画像変更
+    [SerializeField]
+    private GameObject dropItem;
+    [SerializeField]
+    private Sprite dropSprite;
+    private SpriteRenderer itemSprite;
+    private int dropram;    //乱数でdropさせるか決める
+    private bool drop;      //ドロップしたかどうか
+    private bool rndrop;    //乱数させる
 
     //画像変更
     private SpriteRenderer sprite;
@@ -40,32 +52,65 @@ public class JumpEnemy : MonoBehaviour {
     private float notTouchLimit;
     private BoxCollider2D box;
 
+    //効果音
+    [SerializeField,Header("ジャンプ、アタック、死亡、ダメージ")]
+    private AudioSource[] audio;
+    private Renderer renderer;
+    private bool soundPlay;
+
     void Start () {
         sprite = GetComponent<SpriteRenderer>();
         rig = GetComponent<Rigidbody2D>();
         box = GetComponent<BoxCollider2D>();
+        itemSprite = dropItem.GetComponent<SpriteRenderer>();
+        audio = GetComponents<AudioSource>();
+        renderer = GetComponent<Renderer>();
+        sprite.sprite = dropSprite;
         isGround = false;
         isJump = false;
         isAttack = false;
         set = false;
         notTouch = false;
+        drop = false;
+        rndrop = false;
+        soundPlay = false;
 	}
 	
 
 	void Update () {
+        if (transform.position.x < 0)
+        {
+            Destroy(this.gameObject);
+        }
+
         if (notTouch)
         {
             Damage();
-            return;
+        }
+        else
+        {
+            transform.Translate(-speed, 0, 0);
         }
         if (hp <= 0)
         {
             sprite.sprite = damageSprite;
+            if (!rndrop) {
+        if (renderer.isVisible) audio[2].PlayOneShot(audio[2].clip);  //効果音再生
+                dropram = Random.Range(0, 12);  rndrop = true;
+            }
+            if (dropram<=5 && !drop)
+            {
+                itemSprite.sprite = dropSprite;
+                //dropアイテム召喚
+                Instantiate(dropItem, transform.position, Quaternion.identity);
+                drop = true;
+            }
             rig.gravityScale = 1.0f;
             box.enabled = false;
             if (transform.position.y < 0)
             {
                 Score.OneScore();
+                
                 Destroy(this.gameObject);
             }
             return;
@@ -88,6 +133,7 @@ public class JumpEnemy : MonoBehaviour {
             {
                 //ジャンプ処理
                 set = false;
+        if (renderer.isVisible) audio[0].PlayOneShot(audio[0].clip);  //効果音再生
                 rig.AddForce(Vector2.up * jump);
                 sprite.sprite = jumpSprite;
             }
@@ -106,8 +152,11 @@ public class JumpEnemy : MonoBehaviour {
                 if (!isAttack)
                 {
                     sprite.sprite = attackSprite;
-                    //ホーミング弾発射
-                    Instantiate(bullet, transform.position, Quaternion.identity);
+                    if (renderer.isVisible) {
+                        //ホーミング弾発射
+                        Instantiate(bullet, transform.position, Quaternion.identity);
+                    audio[1].PlayOneShot(audio[1].clip);  //効果音再生
+                    }
                     isAttack = true;
                     set = false;
                 }
@@ -119,6 +168,7 @@ public class JumpEnemy : MonoBehaviour {
     void Damage()
     {
         sprite.sprite = damageSprite;
+        if (renderer.isVisible && !soundPlay) audio[3].PlayOneShot(audio[3].clip); soundPlay = true;  //効果音再生
         if (!set) { minusTime = notTouchLimit; set = true; }
         sprite.material.color = new Color(1, 0, 0, 1.0f);
         minusTime -= Time.deltaTime;
@@ -127,7 +177,9 @@ public class JumpEnemy : MonoBehaviour {
             sprite.sprite = defaultSprite;
             notTouch = false;
             set = false;
+            soundPlay = false;
             sprite.material.color = new Color(1, 1, 1, 1.0f);
+             transform.Translate(speed, 0, 0);
         }
     }
 

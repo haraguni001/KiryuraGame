@@ -12,6 +12,6 @@ public class TextItem : MonoBehaviour {
     void Update()
     {
         item = Player.GetItem();
-        itemText.text = "満足度:" + item;
+        itemText.text = "素材:" + item;
     }
 }

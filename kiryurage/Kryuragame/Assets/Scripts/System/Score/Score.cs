@@ -20,7 +20,7 @@ public class Score : MonoBehaviour {
             {
                 if(score>=thirdScore)
                 {
-                    if(score<=secondScore)
+                    if(score>=secondScore)
                     {
                         if (score >= hiScore) { hiScore = score; }
                         else { secondScore = score; }
@@ -47,6 +47,7 @@ public class Score : MonoBehaviour {
         //ゲームオーバーになるとスコアがなくなる
 		if(Application.loadedLevelName=="GameOver")
         {
+            if (score >= hiScore) { hiScore = score; }
             score = 0;
         }
 	}

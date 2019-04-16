@@ -14,14 +14,27 @@ public class HomingEnemy : MonoBehaviour {
     private Rigidbody2D rig;
     private Vector3 diff;
 
-    //画面外にいるかどうか 画面外にいるとfalse
-    private bool visible;
+
+    private Renderer renderer;
 
         //画像変更
     [SerializeField]
     private Sprite damageSprite;
     private bool dead;
     private CircleCollider2D cir;
+
+    private AudioSource audio;
+
+    //dropアイテムと、dropアイテムの画像変更
+    [SerializeField]
+    private GameObject dropItem;
+    [SerializeField]
+    private Sprite dropSprite;
+    private SpriteRenderer itemSprite;
+    private int dropram;    //乱数でdropさせるか決める
+    private bool drop;      //ドロップしたかどうか
+    private bool rndrop;    //乱数させる
+
     void Start()
     {
         minusTime = notTouchLimit;
@@ -29,10 +42,14 @@ public class HomingEnemy : MonoBehaviour {
         player = GameObject.FindWithTag("Player");
         rig = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
-        visible = false;
+        renderer = GetComponent<Renderer>();
+        audio = GetComponent<AudioSource>();
         dead = false;
         diff = (player.transform.position - transform.position);
+        itemSprite = dropItem.GetComponent<SpriteRenderer>();
         cir = GetComponent<CircleCollider2D>();
+        drop = false;
+        rndrop = false;
     }
 
     void Update()
@@ -40,9 +57,27 @@ public class HomingEnemy : MonoBehaviour {
         if (dead)
             {
             sprite.sprite = damageSprite;
-            rig.gravityScale = 1.0f;
+            sprite.material.color = new Color(1, 0, 0, 1.0f);
+            if (!rndrop)
+            {
+                if (renderer.isVisible) audio.PlayOneShot(audio.clip);  //効果音再生
+                dropram = Random.Range(0, 12); rndrop = true;
+            }
+            if (dropram <= 5 && !drop)
+            {
+                itemSprite.sprite = dropSprite;
+                //dropアイテム召喚
+                Instantiate(dropItem, transform.position, Quaternion.identity);
+                drop = true;
+            }
+
+            rig.gravityScale = 10.0f;
             transform.Translate(0, 0, 0);
             cir.enabled = false;
+
+
+
+
             if (transform.position.y < 0)
             {
                 Score.OneScore();
@@ -55,7 +90,7 @@ public class HomingEnemy : MonoBehaviour {
         {
             Destroy(this.gameObject);
         }
-            if (!visible) {
+            if (!renderer.isVisible) {
                 transform.Translate(-speed, 0, 0);
             }
             else
@@ -77,13 +112,8 @@ public class HomingEnemy : MonoBehaviour {
 
         if (collision.tag == "Tentacle" && !dead)
         {
+            audio.PlayOneShot(audio.clip);
             dead=true;
         }
-    }
-
-    //画面内にいるとき
-   private void OnBecameVisible()
-    {
-        visible = true;
     }
 }

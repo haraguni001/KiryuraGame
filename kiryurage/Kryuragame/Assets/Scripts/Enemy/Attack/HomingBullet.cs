@@ -22,7 +22,6 @@ public class HomingBullet : MonoBehaviour {
 
 
     void Update () {
-        
         rig.velocity = new Vector3(diff.x * speed * 3, diff.y * speed * 3);
 
 
@@ -33,6 +32,7 @@ public class HomingBullet : MonoBehaviour {
     {
         Destroy(this.gameObject);
     }
+
 
     void OnTriggerEnter2D(Collider2D collision)
     {

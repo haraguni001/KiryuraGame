@@ -62,9 +62,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Enemy\Attack\HomingBullet.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemGenerator.cs" />
     <Compile Include="Assets\Scripts\Enemy\Enemy.cs" />
     <Compile Include="Assets\Scripts\Enemy\HomingEnemy.cs" />
     <Compile Include="Assets\Scripts\Enemy\JumpEnemy.cs" />
+    <Compile Include="Assets\Scripts\Enemy\MoveBlock.cs" />
     <Compile Include="Assets\Scripts\Player\Bullet.cs" />
     <Compile Include="Assets\Scripts\Player\Player.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerAttack.cs" />
@@ -84,16 +86,16 @@
     <Compile Include="Assets\Scripts\System\UI\tutorialUI.cs" />
     <Compile Include="Assets\Scripts\System\Wave.cs" />
     <Reference Include="UnityEditor.StandardEvents">
-      <HintPath>C:/kiryurage/Kryuragame/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+      <HintPath>C:/Users/K017A1351/Documents/GitHub/KiryuraGame/kiryurage/Kryuragame/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>C:/kiryurage/Kryuragame/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+      <HintPath>C:/Users/K017A1351/Documents/GitHub/KiryuraGame/kiryurage/Kryuragame/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>C:/kiryurage/Kryuragame/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+      <HintPath>C:/Users/K017A1351/Documents/GitHub/KiryuraGame/kiryurage/Kryuragame/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>C:/kiryurage/Kryuragame/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+      <HintPath>C:/Users/K017A1351/Documents/GitHub/KiryuraGame/kiryurage/Kryuragame/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity2018.2.9f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>

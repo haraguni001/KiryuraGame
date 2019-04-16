@@ -23,21 +23,55 @@ public class Enemy : MonoBehaviour {
     [SerializeField]
     private Sprite damageSprite;
     private bool dead;
+    private bool soundPlay;
+    [SerializeField,Header("ダメージ、死亡")]
+    private AudioSource[] audio;
+
+    //dropアイテムと、dropアイテムの画像変更
+    [SerializeField]
+    private GameObject dropItem;
+    [SerializeField]
+    private Sprite dropSprite;
+    private SpriteRenderer itemSprite;
+    private int dropram;    //乱数でdropさせるか決める
+    private bool drop;      //ドロップしたかどうか
+    private bool rndrop;    //乱数させる
+
     private void Start()
     {
         notTouch = false;
         minusTime = notTouchLimit;
         sprite = GetComponent<SpriteRenderer>();
         rig = GetComponent<Rigidbody2D>();
+        audio = GetComponents<AudioSource>();
+        itemSprite = dropItem.GetComponent<SpriteRenderer>();
         dead = false;
+        soundPlay = false;
     }
 
     void Update () {
         if (hp <= 0)
         {
             sprite.sprite = damageSprite;
+            if (!rndrop)
+            {
+                dropram = Random.Range(0, 12); rndrop = true;
+            }
+            if (dropram <= 5 && !drop)
+            {
+                itemSprite.sprite = dropSprite;
+                //dropアイテム召喚
+                Instantiate(dropItem, transform.position, Quaternion.identity);
+                drop = true;
+            }
             rig.gravityScale = 1.0f;
-            dead = true;
+            if (!soundPlay)
+            {
+                audio[1].PlayOneShot(audio[1].clip);
+                soundPlay = true;
+            }
+                dead = true;
+           
             if(transform.position.y < 0)
             {
                 Score.OneScore();
@@ -56,14 +90,20 @@ public class Enemy : MonoBehaviour {
             sprite.sprite = damageSprite;
             transform.Translate(speed, 0, 0);
             sprite.material.color = new Color(1, 0, 0, 1.0f);
-            minusTime-=Time.deltaTime;
+            if(!soundPlay){
+            audio[0].PlayOneShot(audio[0].clip);
+                soundPlay = true;
+            }
+            minusTime -=Time.deltaTime;
             if (minusTime <= 0)
             {
                 sprite.sprite = defaultSprite;
              transform.Translate(-speed, 0, 0);
                 notTouch = false;
+                soundPlay = false;
                 minusTime = notTouchLimit;
                 sprite.material.color = new Color(1, 1, 1, 1.0f);
+
             }
         }
         else
